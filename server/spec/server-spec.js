@@ -47,6 +47,7 @@ describe('Persistent Node Chat Server', function() {
 
         // TODO: You might have to change this test to get all the data from
         // your message table, since this is schema-dependent.
+        console.log('first test, both posts happened');
         var queryString = 'SELECT * FROM messages';
         var queryArgs = [];
 
@@ -65,13 +66,12 @@ describe('Persistent Node Chat Server', function() {
 
   it('Should output all messages from the DB', function(done) {
     // Let's insert a message into the db
-       var queryString = "";
-       var queryArgs = [];
+       var queryString = "INSERT INTO messages (text, roomname, user_id) VALUES ('Men like you can never change!', 'main', 1);";
     // TODO - The exact query string and query args to use
     // here depend on the schema you design, so I'll leave
     // them up to you. */
 
-    dbConnection.query(queryString, queryArgs, function(err) {
+    dbConnection.query(queryString, function(err) {
       if (err) { throw err; }
 
       // Now query the Node chat server and see if it returns
@@ -83,5 +83,24 @@ describe('Persistent Node Chat Server', function() {
         done();
       });
     });
+  });
+
+  it('Should output all unique users from the DB', function(done) {
+    // Let's insert a message into the db
+    // var tablename = 'users';
+    // dbConnection.query('truncate ' + tablename);
+    // var insertColin = "INSERT INTO users (name) VALUES ('Colin');";
+    // var insertBenny = "INSERT INTO users (name) VALUES ('Benny');";
+    // var insertValjean = "INSERT INTO users (name) VALUES ('Paljean')";
+    // dbConnection.query(insertColin, function(err) {
+    //   if (err) { throw err; }
+      request('http://127.0.0.1:3000/classes/users', function(error, response, body) {
+        var userList = JSON.parse(body);
+        expect(userList[1].name).to.equal('Valjean');
+        expect(userList[0].name).to.equal('Colin');
+        done();
+      });
+    // });
+
   });
 });
